@@ -305,8 +305,13 @@ class StaffGradedAssignmentXBlock(
             submission.submitted_at = django_now()
             submission.save()
         student_state = self.student_state()
-        student_state["points_submitted"] = True
-        student_state["activity_points"] = 57
+        try:
+            from xmodule.gamification import share_gamification_user_points
+            gamification_resp = share_gamification_user_points(self)
+            student_state.update(gamification_resp)
+            log.info("GAMIFICATION_RESPONSE:", gamification_resp)
+        except Exception as e:
+            log.error(f"GAMIFICATION ERROR: {e}")
         return Response(json_body=student_state)
 
     @XBlock.handler
