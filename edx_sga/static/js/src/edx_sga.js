@@ -39,7 +39,13 @@ function StaffGradedAssignmentXBlock(runtime, element) {
         $.post(finalizeUploadUrl).success(
           function (state) {
             render(state);
-//            $("#dialog").dialog();
+            console.log("POINT RESPONSE:",state);
+            console.log("POINTS SUBMITTED:", state.points_submitted);
+            if(state.points_submitted){
+                let popup_html = '<div id="dialog" title="Congratulations!">' + '<p>You\'ve gained <b>'+ state.activity_points +'</b> points.</p>' + '</div>';
+                $('body').append(popup_html);
+                $( "#dialog" ).dialog();
+            }
           }
         ).fail(
           function () {
