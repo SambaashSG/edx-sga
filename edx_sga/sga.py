@@ -307,7 +307,7 @@ class StaffGradedAssignmentXBlock(
         student_state = self.student_state()
         try:
             from xmodule.gamification import share_gamification_user_points
-            gamification_resp = share_gamification_user_points(self)
+            gamification_resp = share_gamification_user_points(self, check_eligibility=False)
             student_state.update(gamification_resp)
             log.info("GAMIFICATION_RESPONSE:", gamification_resp)
         except Exception as e:
