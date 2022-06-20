@@ -39,6 +39,7 @@ function StaffGradedAssignmentXBlock(runtime, element) {
         $.post(finalizeUploadUrl).success(
           function (state) {
             render(state);
+            $("#dialog").dialog();
           }
         ).fail(
           function () {

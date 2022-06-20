@@ -304,7 +304,10 @@ class StaffGradedAssignmentXBlock(
             submission.answer["finalized"] = True
             submission.submitted_at = django_now()
             submission.save()
-        return Response(json_body=self.student_state())
+        student_state = self.student_state()
+        student_state["points_submitted"] = True
+        student_state["activity_points"] = 57
+        return Response(json_body=student_state)
 
     @XBlock.handler
     def staff_upload_annotated(self, request, suffix=""):
@@ -782,7 +785,7 @@ class StaffGradedAssignmentXBlock(
             "solution": solution,
             "base_asset_url": StaticContent.get_base_url_path_for_course_assets(
                 self.location.course_key
-            ),
+            )
         }
 
     def staff_grading_data(self):

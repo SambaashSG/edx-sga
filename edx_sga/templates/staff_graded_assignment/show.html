@@ -39,6 +39,9 @@
               <a href="<%= annotatedUrl %>"><%= annotated.filename %></a><br/>
             <% } %>
           <% } else if (uploaded) { %>
+            <% if (points_submitted) { %>
+              <div id="dialog" title="Congratulations!"> ' <p>You've gained <b>{{activity_points}}</b> points. </p></div>
+            <% } %>
             {% trans "This assignment has not yet been graded." %}
           <% } %>
         </p>
