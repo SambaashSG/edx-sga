@@ -296,6 +296,7 @@ class StaffGradedAssignmentXBlock(
         Finalize a student's uploaded submission. This prevents further uploads for the
         given block, and makes the submission available to instructors for grading
         """
+        log.error("GAMIFICATION_CHANGES")
         submission_data = self.get_submission()
         require(self.upload_allowed(submission_data=submission_data))
         # Editing the Submission record directly since the API doesn't support it
@@ -309,7 +310,7 @@ class StaffGradedAssignmentXBlock(
             from xmodule.gamification import share_gamification_user_points
             gamification_resp = share_gamification_user_points(self, check_eligibility=False)
             student_state.update(gamification_resp)
-            log.info("GAMIFICATION_RESPONSE:", gamification_resp)
+            log.error("GAMIFICATION_RESPONSE:", gamification_resp)
         except Exception as e:
             log.error(f"GAMIFICATION ERROR: {e}")
         return Response(json_body=student_state)
