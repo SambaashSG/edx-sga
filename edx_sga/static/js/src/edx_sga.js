@@ -42,8 +42,8 @@ function StaffGradedAssignmentXBlock(runtime, element) {
             console.log("POINT RESPONSE:",state);
             console.log("POINTS SUBMITTED:", state.points_submitted);
             if(state.points_submitted){
-                let popup_html = '<div id="dialog" title="Congratulations!">' + '<p>You\'ve gained <b>'+ state.activity_points +'</b> points.</p>' + '</div>';
-                $('body').append(popup_html);
+                console.log(state.popup_html)
+                $('body').append(state.popup_html);
                 $( "#dialog" ).dialog();
             }
           }
@@ -416,7 +416,7 @@ function StaffGradedAssignmentXBlock(runtime, element) {
 
 
     function sendResizeMessage(height) {
-      // This blocks checks to see if the xBlock is part 
+      // This blocks checks to see if the xBlock is part
       // of Learning MFE
       if (window.parent !== window) {
         window.parent.postMessage({
