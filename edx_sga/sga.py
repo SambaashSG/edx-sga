@@ -306,13 +306,22 @@ class StaffGradedAssignmentXBlock(
             submission.submitted_at = django_now()
             submission.save()
         student_state = self.student_state()
-        try:
-            from xmodule.gamification import share_gamification_user_points
-            gamification_resp = share_gamification_user_points(self, check_eligibility=False)
-            student_state.update(gamification_resp)
-            log.error("GAMIFICATION_RESPONSE:", gamification_resp)
-        except Exception as e:
-            log.error(f"GAMIFICATION ERROR: {e}")
+        gamification_resp = None
+        if settings.FEATURES.get("IS_GAMIFICATION_ENABLED", False):
+            try:
+                from xmodule.gamification import share_gamification_user_points
+                gamification_resp = share_gamification_user_points(self, check_eligibility=False)
+                student_state.update(gamification_resp)
+                log.error("GAMIFICATION_RESPONSE:", gamification_resp)
+            except Exception as e:
+                log.error(f"GAMIFICATION ERROR: {e}")
+        if settings.FEATURES.get("IS_OC_PUSH_NOTIFICATION_ENABLED", False):
+            from xmodule.oc_push_notification import unit_completion_activity
+            gamification_point = None
+            if gamification_resp and gamification_resp.get("points_submitted"):
+                gamification_point = gamification_resp.get("gained_points")
+            notification = unit_completion_activity(self, gamification_point=gamification_point, check_eligibility=False)
+            log.info(f"NOTIFICATION FOR {self.get_parent().display_name}: {notification}")
         return Response(json_body=student_state)
 
     @XBlock.handler
