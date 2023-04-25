@@ -51,6 +51,8 @@ from edx_sga.utils import (
     is_finalized_submission,
     utcnow,
 )
+from openedx_events.learning.signals import STUDENT_PROGRESS_CHANGED
+from openedx_events.learning.data import ProgressUserCourseData
 
 log = logging.getLogger(__name__)
 
@@ -322,6 +324,13 @@ class StaffGradedAssignmentXBlock(
                 gamification_point = gamification_resp.get("gained_points")
             notification = unit_completion_activity(self, gamification_point=gamification_point, check_eligibility=False)
             log.info(f"NOTIFICATION FOR {self.get_parent().display_name}: {notification}")
+        if settings.FEATURES.get("IS_SNS_STUDENT_PROGRESS_SEND_ENABLED", False):
+            course_id = str(self.course_id)
+            user_id = self.scope_ids.user_id
+            STUDENT_PROGRESS_CHANGED.send_event(progress=ProgressUserCourseData(
+                user_id=user_id,
+                course_id=course_id
+            ))
         return Response(json_body=student_state)
 
     @XBlock.handler
